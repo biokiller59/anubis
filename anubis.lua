@@ -26,7 +26,8 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 -- ==================== STEAL CORE (merged from StealEggHub, WindUI stripped) ====================
--- Backend: remotes, egg scan, tween/warp farm loops, treadmill, trails, anti-AFK, performance.
+-- Wrapped in a function: Lua allows max 200 locals per chunk, core+UI overflow it.
+local Steal = (function()
 local e=game:GetService( "Players" )
 local r=game:GetService( "Workspace" )
 local y=game:GetService( "RunService" )
@@ -3947,6 +3948,56 @@ y.Heartbeat :Connect(function(...)
     end
 end
 )
+
+-- ==================== STEAL CORE INIT (merged, WindUI removed) ====================
+task.spawn(function()
+    task.wait(0.5)
+    A4()
+    b4(true)
+    C4()
+    if o.Character then
+        z4(o.Character)
+    end
+    u4()
+end)
+o.CharacterAdded:Connect(function(char)
+    task.wait(0.6)
+    if h.alive then
+        D4()
+        n4()
+        C4()
+        A4()
+        b4(true)
+        z4(char)
+        u4()
+    end
+end)
+if h.performanceMode then
+    task.spawn(Mk)
+end
+if h.disable3D then
+    pcall(function()
+        game:GetService("RunService"):Set3dRenderingEnabled(false)
+    end)
+end
+if h.antiAFK then
+    task.spawn(bk)
+end
+
+
+return {
+    h = h,
+    getMode = function() return Y4 end,
+    T4 = T4, N4 = N4, l4 = l4, v4 = v4, g4 = g4, Q4 = Q4, u4 = u4, y4 = y4,
+    f4 = f4, M4 = M4, C4 = C4, D4 = D4, L4 = L4, n4 = n4, b4 = b4,
+    enableGodmode = enableDesyncGodmode, disableGodmode = disableDesyncGodmode,
+    Mk = Mk, Ik = Ik, bk = bk, Ak = Ak, vk = vk,
+    saveSpeed = Y, saveCfg = x,
+    zones = M, rarities = X, zoneColors = d, rarityColors = G,
+    teleportSvc = TeleportService,
+}
+
+end)()
 -- ==================== END STEAL CORE ====================
 pcall(function()
     print("[HubMenu] stage2: steal core loaded")
@@ -4744,21 +4795,21 @@ for i, tab in ipairs(TABS) do
 
         -- ===== StealEggHub: character & flight (merged) =====
         mkSection(scroll, 5, "STEAL HUB — CHARACTER")
-        mkToggle(scroll, 6, "Godmode", "Immunity vs map traps and hazards", h.godmode, function(on)
+        mkToggle(scroll, 6, "Godmode", "Immunity vs map traps and hazards", Steal.h.godmode, function(on)
             if on then
-                enableDesyncGodmode()
+                Steal.enableGodmode()
             else
-                disableDesyncGodmode()
+                Steal.disableGodmode()
             end
         end)
-        createInputCard(7, "Flight Speed", "Cruise flight speed in studs/s (100-1000)", h.glideSpeed or 600, function(val)
-            h.glideSpeed = math.clamp(math.floor(val), 100, 1000)
-            Y(h.glideSpeed)
+        createInputCard(7, "Flight Speed", "Cruise flight speed in studs/s (100-1000)", Steal.h.glideSpeed or 600, function(val)
+            Steal.h.glideSpeed = math.clamp(math.floor(val), 100, 1000)
+            Steal.saveSpeed(Steal.h.glideSpeed)
         end)
         mkButton(scroll, 8, "Unstick / Leave Treadmill", function()
-            M4()
-            C4()
-            D4()
+            Steal.M4()
+            Steal.C4()
+            Steal.D4()
         end)
     elseif tab.name == "Config" then
         local settingCard = Instance.new("Frame")
@@ -4846,14 +4897,14 @@ for i, tab in ipairs(TABS) do
             sysY = sysY + 46
         end
         sysButton("Rejoin Server", function()
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, player)
+            Steal.teleportSvc:TeleportToPlaceInstance(game.PlaceId, game.JobId, player)
         end)
         sysButton("Reset Character State", function()
-            D4()
-            u4()
+            Steal.D4()
+            Steal.u4()
         end)
         sysButton("Unload Hub", function()
-            h.alive = false
+            Steal.h.alive = false
             screenGui:Destroy()
         end)
     elseif tab.name == "Egg" then
@@ -5085,7 +5136,7 @@ for i, tab in ipairs(TABS) do
         zoneLayout.CellPadding = UDim2.new(0.04, 0, 0, 6)
         zoneLayout.SortOrder = Enum.SortOrder.LayoutOrder
         zoneLayout.Parent = zoneGrid
-        for zoneIdx, zone in ipairs(M) do
+        for zoneIdx, zone in ipairs(Steal.zones) do
             local zoneBtn = Instance.new("TextButton")
             zoneBtn.Font = Enum.Font.GothamBold
             zoneBtn.TextSize = 11
@@ -5094,8 +5145,8 @@ for i, tab in ipairs(TABS) do
             zoneBtn.Parent = zoneGrid
             corner(6, zoneBtn)
             local function paintZone()
-                if h.selectedZones and h.selectedZones[zone] then
-                    zoneBtn.BackgroundColor3 = d[zone] or COLORS.Selected
+                if Steal.h.selectedZones and Steal.h.selectedZones[zone] then
+                    zoneBtn.BackgroundColor3 = Steal.zoneColors[zone] or COLORS.Selected
                     zoneBtn.TextColor3 = Color3.new(1, 1, 1)
                     zoneBtn.Text = "✓ " .. zone
                 else
@@ -5106,12 +5157,12 @@ for i, tab in ipairs(TABS) do
             end
             paintZone()
             zoneBtn.MouseButton1Click:Connect(function()
-                if not h.selectedZones then
-                    h.selectedZones = {}
+                if not Steal.h.selectedZones then
+                    Steal.h.selectedZones = {}
                 end
-                h.selectedZones[zone] = not h.selectedZones[zone]
+                Steal.h.selectedZones[zone] = not Steal.h.selectedZones[zone]
                 paintZone()
-                x()
+                Steal.saveCfg()
             end)
         end
         mkSection(scroll, 12, "TARGET RARITIES")
@@ -5125,7 +5176,7 @@ for i, tab in ipairs(TABS) do
         rarityLayout.CellPadding = UDim2.new(0.04, 0, 0, 6)
         rarityLayout.SortOrder = Enum.SortOrder.LayoutOrder
         rarityLayout.Parent = rarityGrid
-        for rarityIdx, rarity in ipairs(X) do
+        for rarityIdx, rarity in ipairs(Steal.rarities) do
             local rarityBtn = Instance.new("TextButton")
             rarityBtn.Font = Enum.Font.GothamBold
             rarityBtn.TextSize = 11
@@ -5134,8 +5185,8 @@ for i, tab in ipairs(TABS) do
             rarityBtn.Parent = rarityGrid
             corner(6, rarityBtn)
             local function paintRarity()
-                if h.selectedRarities and h.selectedRarities[rarity] then
-                    rarityBtn.BackgroundColor3 = G[rarity] or COLORS.Selected
+                if Steal.h.selectedRarities and Steal.h.selectedRarities[rarity] then
+                    rarityBtn.BackgroundColor3 = Steal.rarityColors[rarity] or COLORS.Selected
                     rarityBtn.TextColor3 = Color3.new(1, 1, 1)
                     rarityBtn.Text = "✓ " .. rarity
                 else
@@ -5146,140 +5197,140 @@ for i, tab in ipairs(TABS) do
             end
             paintRarity()
             rarityBtn.MouseButton1Click:Connect(function()
-                if not h.selectedRarities then
-                    h.selectedRarities = {}
+                if not Steal.h.selectedRarities then
+                    Steal.h.selectedRarities = {}
                 end
-                h.selectedRarities[rarity] = not h.selectedRarities[rarity]
+                Steal.h.selectedRarities[rarity] = not Steal.h.selectedRarities[rarity]
                 paintRarity()
-                x()
+                Steal.saveCfg()
             end)
         end
-        mkToggle(scroll, 14, "Always Steal Secret+", "Secret/Eternal/Divine bypass the zone filter", h.alwaysCollectSecretPlus ~= false, function(on)
-            h.alwaysCollectSecretPlus = on
-            x()
+        mkToggle(scroll, 14, "Always Steal Secret+", "Secret/Eternal/Divine bypass the zone filter", Steal.h.alwaysCollectSecretPlus ~= false, function(on)
+            Steal.h.alwaysCollectSecretPlus = on
+            Steal.saveCfg()
         end)
     elseif tab.name == "Browse" then
         local browseScroll = mkScroll(page)
         mkSection(browseScroll, 1, "AUTO STEAL MODES")
         mkToggle(browseScroll, 2, "Auto Steal (Tween)", "Smooth fly-steal loop along the highway", false, function(on)
             if on then
-                T4("TWEEN")
-            elseif Y4 == "TWEEN" then
-                T4("NONE")
+                Steal.T4("TWEEN")
+            elseif Steal.getMode() == "TWEEN" then
+                Steal.T4("NONE")
             end
         end)
         mkToggle(browseScroll, 3, "Auto Steal (Teleport)", "Warp-steal loop", false, function(on)
             if on then
-                T4("WARP")
-            elseif Y4 == "WARP" then
-                T4("NONE")
+                Steal.T4("WARP")
+            elseif Steal.getMode() == "WARP" then
+                Steal.T4("NONE")
             end
         end)
         mkButton(browseScroll, 4, "Single Steal (Teleport)", function()
-            if Y4 ~= "NONE" then
-                T4("NONE")
+            if Steal.getMode() ~= "NONE" then
+                Steal.T4("NONE")
                 task.wait(0.2)
             end
-            local tgt = N4()
-            if tgt and l4(tgt, nil) then
-                pcall(u4)
-                if h.autoGlide then
-                    Q4(h.glideSpeed)
-                    u4()
+            local tgt = Steal.N4()
+            if tgt and Steal.l4(tgt, nil) then
+                pcall(Steal.u4)
+                if Steal.h.autoGlide then
+                    Steal.Q4(Steal.h.glideSpeed)
+                    Steal.u4()
                 end
             end
         end)
         mkSection(browseScroll, 5, "PLACE & HATCH")
         mkButton(browseScroll, 6, "Place Eggs Now", function()
-            h.statusText = "[Manual] Depositing eggs..."
-            g4(h.glideSpeed)
-            v4()
-            u4()
-            h.isReturning = false
-            h.delivering = false
+            Steal.h.statusText = "[Manual] Depositing eggs..."
+            Steal.g4(Steal.h.glideSpeed)
+            Steal.v4()
+            Steal.u4()
+            Steal.h.isReturning = false
+            Steal.h.delivering = false
         end)
-        mkToggle(browseScroll, 7, "Auto Place (Every 5)", "Return home every 5 steals to deposit", h.autoPlaceEvery5, function(on)
-            h.autoPlaceEvery5 = on
+        mkToggle(browseScroll, 7, "Auto Place (Every 5)", "Return home every 5 steals to deposit", Steal.h.autoPlaceEvery5, function(on)
+            Steal.h.autoPlaceEvery5 = on
             if not on then
-                h.batchStealCount = 0
+                Steal.h.batchStealCount = 0
             end
         end)
-        mkToggle(browseScroll, 8, "Auto Hatch", "Hatch ready eggs from anywhere", h.autoHatch, function(on)
-            h.autoHatch = on
+        mkToggle(browseScroll, 8, "Auto Hatch", "Hatch ready eggs from anywhere", Steal.h.autoHatch, function(on)
+            Steal.h.autoHatch = on
         end)
-        mkToggle(browseScroll, 9, "Auto Return", "Fly back to the safe line after a steal", h.autoGlide, function(on)
-            h.autoGlide = on
+        mkToggle(browseScroll, 9, "Auto Return", "Fly back to the safe line after a steal", Steal.h.autoGlide, function(on)
+            Steal.h.autoGlide = on
         end)
         local setFarmStatus = mkStatus(browseScroll, 10, "Farm Status", "Idle")
         task.spawn(function()
             while screenGui.Parent do
                 task.wait(0.5)
-                setFarmStatus("Mode: " .. tostring(Y4) .. " | Carried: " .. y4() .. " | " .. tostring(h.statusText))
+                setFarmStatus("Mode: " .. tostring(Steal.getMode()) .. " | Carried: " .. Steal.y4() .. " | " .. tostring(Steal.h.statusText))
             end
         end)
     elseif tab.name == "View" then
         local viewScroll = mkScroll(page)
         mkSection(viewScroll, 1, "PERFORMANCE & GRAPHICS")
-        mkToggle(viewScroll, 2, "Ultra Potato Mode", "Max FPS: strips textures, shadows, FX", h.performanceMode, function(on)
-            h.performanceMode = on
-            x()
+        mkToggle(viewScroll, 2, "Ultra Potato Mode", "Max FPS: strips textures, shadows, FX", Steal.h.performanceMode, function(on)
+            Steal.h.performanceMode = on
+            Steal.saveCfg()
             if on then
-                Mk()
+                Steal.Mk()
             else
-                Ik()
+                Steal.Ik()
             end
         end)
-        mkToggle(viewScroll, 3, "Disable 3D Rendering", "GPU saver for overnight farming", h.disable3D, function(on)
-            h.disable3D = on
-            x()
+        mkToggle(viewScroll, 3, "Disable 3D Rendering", "GPU saver for overnight farming", Steal.h.disable3D, function(on)
+            Steal.h.disable3D = on
+            Steal.saveCfg()
             pcall(function()
                 game:GetService("RunService"):Set3dRenderingEnabled(not on)
             end)
         end)
-        mkToggle(viewScroll, 4, "Hide 'Not Enough Money'", "Suppress the red cash alert", h.hideNotEnoughMoney ~= false, function(on)
-            h.hideNotEnoughMoney = on
-            x()
+        mkToggle(viewScroll, 4, "Hide 'Not Enough Money'", "Suppress the red cash alert", Steal.h.hideNotEnoughMoney ~= false, function(on)
+            Steal.h.hideNotEnoughMoney = on
+            Steal.saveCfg()
         end)
         mkSection(viewScroll, 5, "IDLE PROTECTION")
-        mkToggle(viewScroll, 6, "Anti-AFK", "Menu pulse and touch input every 10 min", h.antiAFK ~= false, function(on)
-            h.antiAFK = on
-            x()
+        mkToggle(viewScroll, 6, "Anti-AFK", "Menu pulse and touch input every 10 min", Steal.h.antiAFK ~= false, function(on)
+            Steal.h.antiAFK = on
+            Steal.saveCfg()
             if on then
-                bk()
+                Steal.bk()
             else
-                Ak()
+                Steal.Ak()
             end
         end)
     elseif tab.name == "Shop" then
         local shopScroll = mkScroll(page)
         mkSection(shopScroll, 1, "SPEED TRAILS")
-        mkToggle(shopScroll, 2, "Auto Buy & Equip Trails", "Buy the best affordable trail automatically", h.autoBuyTrails ~= false, function(on)
-            h.autoBuyTrails = on
-            x()
+        mkToggle(shopScroll, 2, "Auto Buy & Equip Trails", "Buy the best affordable trail automatically", Steal.h.autoBuyTrails ~= false, function(on)
+            Steal.h.autoBuyTrails = on
+            Steal.saveCfg()
         end)
         mkButton(shopScroll, 3, "Equip Best Owned Trail Now", function()
-            vk()
+            Steal.vk()
         end)
     elseif tab.name == "Events" then
         local eventScroll = mkScroll(page)
         mkSection(eventScroll, 1, "TREADMILL")
-        mkToggle(eventScroll, 2, "Auto Treadmill", "Run the base treadmill when idle", h.autoTreadmill ~= false, function(on)
-            h.autoTreadmill = on
-            x()
-            n4()
-            if not on and (h.onTreadmill or L4()) then
-                M4()
+        mkToggle(eventScroll, 2, "Auto Treadmill", "Run the base treadmill when idle", Steal.h.autoTreadmill ~= false, function(on)
+            Steal.h.autoTreadmill = on
+            Steal.saveCfg()
+            Steal.n4()
+            if not on and (Steal.h.onTreadmill or Steal.L4()) then
+                Steal.M4()
             end
         end)
-        mkToggle(eventScroll, 3, "Auto Upgrade Treadmill", "Upgrade tier when cash allows", h.autoUpgradeTreadmill ~= false, function(on)
-            h.autoUpgradeTreadmill = on
-            x()
+        mkToggle(eventScroll, 3, "Auto Upgrade Treadmill", "Upgrade tier when cash allows", Steal.h.autoUpgradeTreadmill ~= false, function(on)
+            Steal.h.autoUpgradeTreadmill = on
+            Steal.saveCfg()
         end)
         mkButton(eventScroll, 4, "Mount Treadmill Now", function()
-            f4()
+            Steal.f4()
         end)
         mkButton(eventScroll, 5, "Dismount Treadmill", function()
-            M4()
+            Steal.M4()
         end)
     elseif tab.name == "Stats" then
         local statsScroll = mkScroll(page)
@@ -5289,12 +5340,12 @@ for i, tab in ipairs(TABS) do
             while screenGui.Parent do
                 task.wait(0.5)
                 local mode = "Idle"
-                if Y4 == "TWEEN" then
+                if Steal.getMode() == "TWEEN" then
                     mode = "Auto Steal (Tween)"
-                elseif Y4 == "WARP" then
+                elseif Steal.getMode() == "WARP" then
                     mode = "Auto Steal (Teleport)"
                 end
-                setDash("Status: " .. tostring(h.statusText) .. " | Farm: " .. mode .. " | Carried: " .. y4() .. " | Speed: " .. (h.glideSpeed or 600))
+                setDash("Status: " .. tostring(Steal.h.statusText) .. " | Farm: " .. mode .. " | Carried: " .. Steal.y4() .. " | Speed: " .. (Steal.h.glideSpeed or 600))
             end
         end)
     else
@@ -5495,40 +5546,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
--- ==================== STEAL CORE INIT (merged, WindUI removed) ====================
-task.spawn(function()
-    task.wait(0.5)
-    A4()
-    b4(true)
-    C4()
-    if o.Character then
-        z4(o.Character)
-    end
-    u4()
-end)
-o.CharacterAdded:Connect(function(char)
-    task.wait(0.6)
-    if h.alive then
-        D4()
-        n4()
-        C4()
-        A4()
-        b4(true)
-        z4(char)
-        u4()
-    end
-end)
-if h.performanceMode then
-    task.spawn(Mk)
-end
-if h.disable3D then
-    pcall(function()
-        game:GetService("RunService"):Set3dRenderingEnabled(false)
-    end)
-end
-if h.antiAFK then
-    task.spawn(bk)
-end
 pcall(function()
     print("[HubMenu] stage3: script end reached, UI built")
     game:GetService("StarterGui"):SetCore("SendNotification", {Title = "HubMenu", Text = "stage3: UI built", Duration = 3})
