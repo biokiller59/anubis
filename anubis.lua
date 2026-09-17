@@ -4164,7 +4164,7 @@ titleText.TextXAlignment = Enum.TextXAlignment.Left
 titleText.BackgroundTransparency = 1
 titleText.Size = UDim2.new(1, -140, 1, 0)
 titleText.Position = UDim2.new(0, 18, 0, 0)
-titleText.Text = "Hub Menu"
+titleText.Text = "AnubisHub"
 titleText.ZIndex = 4
 titleText.Parent = titleBar
 
