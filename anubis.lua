@@ -18,8 +18,8 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 pcall(function()
-    print("[HubMenu] stage1: script start")
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "HubMenu", Text = "stage1: script start", Duration = 3})
+    print("[AnubisHub] stage1: script start")
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "AnubisHub", Text = "stage1: script start", Duration = 3})
 end)
 
 local player = Players.LocalPlayer
@@ -4000,8 +4000,8 @@ return {
 end)()
 -- ==================== END STEAL CORE ====================
 pcall(function()
-    print("[HubMenu] stage2: steal core loaded")
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "HubMenu", Text = "stage2: steal core loaded", Duration = 3})
+    print("[AnubisHub] stage2: steal core loaded")
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "AnubisHub", Text = "stage2: steal core loaded", Duration = 3})
 end)
 
 -- ==================== GLOBAL COOLDOWN SYSTEM (2.5s) ====================
@@ -4118,7 +4118,7 @@ end)
 
 -- ==================== ROOT ====================
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "HubMenu"
+screenGui.Name = "AnubisHub"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = playerGui
@@ -5547,6 +5547,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 end)
 
 pcall(function()
-    print("[HubMenu] stage3: script end reached, UI built")
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "HubMenu", Text = "stage3: UI built", Duration = 3})
+    print("[AnubisHub] stage3: script end reached, UI built")
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "AnubisHub", Text = "stage3: UI built", Duration = 3})
 end)
